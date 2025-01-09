@@ -7,7 +7,8 @@ enum PlayerCondition
     Active = (player_condition_type)0b00000001,
     Fold = Active << 1,
     Call = Fold << 1,
-    Raise = Call << 1
+    Raise = Call << 1,
+    Hold = Raise << 1
 };
 
 enum GameCondition

@@ -1,3 +1,5 @@
+#include <ctime>
+
 #include "Player.h"
 #include "GlobalConstants.h"
 #include "GamePlay.h"
@@ -6,7 +8,6 @@ void InitEmptyPlayer(Player& player)
 {
 	player._name = "";
 	player._cardsAndRangeToString = "";
-	player._isHasSevenClubs = SEVEN_CLUBS_NOT_PRESENT;
 	player._playerActive = PlayerCondition::Unactive;
 	player._chips = 0;
 	player._lastRaice = 0;
@@ -36,21 +37,22 @@ int CalcMaxRaise(Player* players)
 	return maxRaise;
 }
 
-int SetCards(Card* cardsDesk)
+void SetCards(Player& player,  Card* cardsDesk, int& deckSize)
 {
 	srand(time(0));
-	this->ClearCards();
-	this->_isHasSevenClubs = SEVEN_CLUBS_NOT_PRESENT;
+	Card* cards = new Card[CARDS_COUNT];
 
 	for (int i = 0; i < CARDS_COUNT; i++)
 	{
-		int randomIndex = rand() % cardsDesk.size();
+		int randomIndex = rand() % deckSize;
 
-		Card card = cardsDesk[randomIndex];
-		this->_cards.push_back(card);
-		this->_isHasSevenClubs = this->_isHasSevenClubs || card.GetIsSevenClubs();
-		cardsDesk.erase(cardsDesk.begin() + randomIndex);
+		cards[i] = cardsDesk[randomIndex];
+		deckSize--;
+		cardsDesk[randomIndex] = cardsDesk[deckSize];
 	}
 
-	return CalcPoints();
+	CalcPoints();
+
+	delete[] cards;
+	cards = nullptr;
 }

@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
+
 #include "GlobalTypes.h"
+#include "Card.h"
 
 struct Player
 {
 	std::string _name;
-	bool _isHasSevenClubs;
 	player_condition_type _playerActive;
 	std::string _cardsAndRangeToString;
 
@@ -18,4 +19,4 @@ struct Player
 void InitEmptyPlayer(Player&);
 bool IsPlayerInDeal(player_condition_type);
 int CalcMaxRaise(Player*);
-int SetCards(Card*);
+void SetCards(Player&, Card*, int&);

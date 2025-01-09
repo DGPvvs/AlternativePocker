@@ -17,7 +17,7 @@ GameCondition DealLoop(Player* players, Deal* deal)
 		DealPlay(players, deal);
 	}
 
-	DeterminingWinner(players);
+	DeterminingWinner(players, deal);
 
 	deal->_dealFlag = CONTINUE_DEAL;
 
@@ -30,6 +30,8 @@ bool DealStart(Player* players, Deal* deal)
 	Card* cardDeck = new Card[DECK_COUNT];
 
 	SetUpCardDesk(cardDeck);
+	int currentDeskCount = DECK_COUNT;
+	int* currentDeskCountPtr = &currentDeskCount;
 
 	bool result = DEAL_PLAY;
 
@@ -47,7 +49,7 @@ bool DealStart(Player* players, Deal* deal)
 
 			std::cout << player._name << ": " << player._chips << std::endl << std::endl;
 
-			player._currentPoints = SetCards(cardDeck);
+			SetCards(player, cardDeck, currentDeskCount);
 		}
 	}
 	delete[] cardDeck;
@@ -61,108 +63,207 @@ void DealPlay(Player* players, Deal* deal)
 	int currentCall = 0;
 	int currentPlayerIndex = 0;
 	bool isFirst = true;
-	int activePlayers = ActivePlayersCount(players);
+	int activePlayers = ActivePlayersInDealCount(players);
 
 	while ((activePlayers > 1) && currentCall < activePlayers - 1)
 	{
-		int currentMaxRaise = CalcMaxRaise(players);
+		deal->_currentMaxRaise = CalcMaxRaise(players);
 
 		Player& player = players[currentPlayerIndex];
-
-		std::cout << "Pot: " << deal->_pot << std::endl << std::endl;
-
-		bool isCorrect = false;
-
-		while (!isCorrect)
+		player_condition_type condition = player._playerActive;
+		if (IsPlayerInDeal(condition))
 		{
-			player_condition_type ChoiceMade = PlayerCondition::Unactive;
-			std::cout << "You have given: " << player._lastRaice << std::endl;
-			std::cout << "Last raise is: " << deal->_lastGameRaise << std::endl << std::endl;
-			std::cout << player._cardsAndRangeToString << std::endl;
-			if (isFirst)
-			{
-				std::cout << player.GetName() << " raise or fold? r/f: ";
-				ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold;
-			}
-			else if (this->_currentMaxRaise <= this->_lastGameRaise)
-			{
-				std::cout << player.GetName() << " call or fold? c/f: ";
-				ChoiceMade = PlayerCondition::Fold | PlayerCondition::Call;
-			}
-			else
-			{
-				std::cout << player.GetName() << " raise, call or fold? r/c/f: ";
-				ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold | PlayerCondition::Call;
-			}
+			std::cout << "Pot: " << deal->_pot << std::endl << std::endl;
 
-			std::string s;
-			std::getline(std::cin, s);
-			std::cout << std::endl;
+			bool isCorrect = false;
 
-			if ((s == "f" || s == "F") && (ChoiceMade & PlayerCondition::Fold) == PlayerCondition::Fold)
+			while (!isCorrect)
 			{
-				auto flag = player.GetPlayerCondition();
-				flag = flag & (~PlayerCondition::Active);
-				flag = flag | PlayerCondition::Fold;
-				player.SetPlayerActive(flag);
-				isCorrect = true;
-			}
-			else if ((s == "c" || s == "C") && !isFirst && (ChoiceMade & PlayerCondition::Call) == PlayerCondition::Call)
-			{
-				this->_playersQu.push(&player);
-				currentCall++;
-				int lastPlayerRaise = player.GetLastRaise();
-				int pays = this->_lastGameRaise - lastPlayerRaise;
+				player_condition_type ChoiceMade = PlayerCondition::Unactive;
+				std::cout << "You have given: " << player._lastRaice << std::endl;
+				std::cout << "Last raise is: " << deal->_lastGameRaise << std::endl << std::endl;
+				std::cout << player._cardsAndRangeToString << std::endl;
 
-				player.SetLastRaise(this->_lastGameRaise);
-
-				player.AddChips(-pays);
-				this->_pot += pays;
-				isCorrect = true;
-			}
-			else if ((s == "r" || s == "R") && (ChoiceMade & PlayerCondition::Raise) == PlayerCondition::Raise)
-			{
-				this->_playersQu.push(&player);
-
-				bool isCorrectPay = false;
-				int paymentAmount;
-
-				while (!isCorrectPay)
+				if (isFirst)
 				{
-					std::cout << player.GetName() << " pay: (" << this->_lastGameRaise + 10 << " - " << this->_currentMaxRaise << "): ";
-					std::getline(std::cin, s);
-					std::cout << std::endl;
-
-					try
-					{
-						paymentAmount = stoi(s);
-						if ((paymentAmount >= this->_lastGameRaise + 10) && paymentAmount <= this->_currentMaxRaise)
-						{
-							isCorrectPay = true;
-						}
-					}
-					catch (const std::exception&)
-					{
-						isCorrectPay = false;
-					}
+					std::cout << player._name << " raise or fold? r/f: ";
+					ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold;
+				}
+				else if (deal->_currentMaxRaise <= deal->_lastGameRaise)
+				{
+					std::cout << player._name << " call or fold? c/f: ";
+					ChoiceMade = PlayerCondition::Fold | PlayerCondition::Call;
+				}
+				else
+				{
+					std::cout << player._name << " raise, call or fold? r/c/f: ";
+					ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold | PlayerCondition::Call;
 				}
 
-				isFirst = false;
+				std::string s;
+				std::getline(std::cin, s);
+				std::cout << std::endl;
 
-				player.SetLastRaise(paymentAmount);
-				player.AddChips(-paymentAmount);
+				if ((s == "f" || s == "F") && (ChoiceMade & PlayerCondition::Fold) == PlayerCondition::Fold)
+				{
+					player._playerActive = PlayerCondition::Fold;
+					isCorrect = true;
+				}
+				else if ((s == "c" || s == "C") && !isFirst && (ChoiceMade & PlayerCondition::Call) == PlayerCondition::Call)
+				{
+					currentCall++;
+					int lastPlayerRaise = player._lastRaice;
+					int pays = deal->_lastGameRaise - lastPlayerRaise;
 
-				this->_pot += paymentAmount;
-				this->_lastGameRaise = paymentAmount;
+					player._lastRaice = deal->_lastGameRaise;
 
-				isCorrect = true;
-				currentCall = 0;
+					player._chips -= pays;
+					deal->_pot += pays;
+					isCorrect = true;
+				}
+				else if ((s == "r" || s == "R") && (ChoiceMade & PlayerCondition::Raise) == PlayerCondition::Raise)
+				{
+					bool isCorrectPay = false;
+					int paymentAmount;
+
+					while (!isCorrectPay)
+					{
+						std::cout << player._name << " pay: (" << deal->_lastGameRaise + CHIP_VALUE << " - " << deal->_currentMaxRaise << "): ";
+						std::getline(std::cin, s);
+						std::cout << std::endl;
+
+						try
+						{
+							paymentAmount = stoi(s);
+							if ((paymentAmount >= deal->_lastGameRaise + CHIP_VALUE) && paymentAmount <= deal->_currentMaxRaise)
+							{
+								isCorrectPay = true;
+							}
+						}
+						catch (const std::exception&)
+						{
+							isCorrectPay = false;
+						}
+					}
+
+					isFirst = false;
+
+					player._lastRaice = paymentAmount;
+					player._chips -= paymentAmount;
+
+					deal->_pot += paymentAmount;
+					deal->_lastGameRaise = paymentAmount;
+
+					isCorrect = true;
+					currentCall = 0;
+				}
 			}
 		}
 
 		currentPlayerIndex = (++currentPlayerIndex) % MAX_PLAYERS;
 
 		activePlayers = ActivePlayersCount(players);
+	}
+}
+
+void DeterminingWinner(Player* players, Deal* deal)
+{
+	int maxPoint = 0;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+		player_condition_type condition = player._playerActive;
+
+		if (IsPlayerInDeal(condition) && player._currentPoints > maxPoint)
+		{
+			maxPoint = player._currentPoints;
+		}
+	}
+
+	int winnersCount = 0;
+	int lastWinnerIdx = -1;
+
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+		player_condition_type condition = player._playerActive;
+		if (IsPlayerInDeal(condition))
+		{
+			if (player._currentPoints != maxPoint)
+			{
+				player._playerActive = PlayerCondition::Hold;
+			}
+			else
+			{
+				winnersCount++;
+				lastWinnerIdx = i;
+			}
+		}
+	}
+
+	if (winnersCount > 1)
+	{
+		int halfPot = std::ceil(1.0 * deal->_pot / 2);
+
+		for (int i = 0; i < MAX_PLAYERS; i++)
+		{
+			Player& player = players[i];
+			player_condition_type condition = player._playerActive;
+
+			if (condition == PlayerCondition::Active)
+			{
+				if (player._chips < CHIP_VALUE)
+				{
+					player._chips = CHIPS_ADD_VALUE * CHIP_VALUE;
+				}
+			}
+			else if (condition == PlayerCondition::Hold)
+			{
+				if (player._chips < (halfPot + CHIP_VALUE))
+				{
+					player._playerActive = PlayerCondition::Fold;
+				}
+				else
+				{
+					bool isCorrect = false;
+
+					while (!isCorrect)
+					{
+						std::cout << player._name << " will you pay half pot? y/n:";
+						std::string s;
+						std::getline(std::cin, s);
+						std::cout << std::endl << std::endl;
+
+						if (s == "y" || s == "Y")
+						{
+							player._chips -= halfPot;
+							deal->_pot += halfPot;
+							player._playerActive = PlayerCondition::Active;
+							player._lastRaice = 0;
+							isCorrect = true;
+						}
+						else if (s == "n" || s == "N")
+						{
+							player._playerActive = PlayerCondition::Fold;
+							player._lastRaice = 0;
+							isCorrect = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		Player& winner = players[lastWinnerIdx];
+
+		winner._chips += deal->_pot;
+		winner._lastRaice = 0;
+		winner._playerActive = PlayerCondition::Active;
+		deal->_pot = 0;
+		deal->_lastGameRaise = 0;
+
+		std::cout << winner._name << " is winner." << std::endl << std::endl;
 	}
 }
 

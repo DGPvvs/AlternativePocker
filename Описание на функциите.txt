@@ -1,0 +1,18 @@
+void GameRun() - входна точка на играта
+void GameChoisNewGame(Player* players) - избор на нова игра или продължаване на съществуваща игра
+int ActivePlayersInDealCount(Player* players) - връща броат на активните играчи в текущата ръка
+FileCondition GameReadFromFile(Player* players) - четене на игра от файл
+int GameSetPlayersNum() - задаване на брой играчи при нова игра - потребителски вход
+void GameInitPlayers(Player* players, int playersNum) - първоначално инициализиране на играчите при избор на нова игра
+void GameClear(Player* players) - задава празен списък с играчи
+void InitEmptyPlayer(Player& player) - задава празни полета на играч
+void ClearDeal(Deal* deal) - изчиства раздаване. Ако deal._dealFlag e true изчиства и подът
+GameCondition DealLoop(Player* players, Deal* deal) - разиграване на ръка. Вика се рекурсивно до победител в ръка
+bool DealStart(Player* players, Deal* deal) - раздава картите на играчите и определя състоянието им в зависимост от раздадените карти
+void DealPlay(Player* players, Deal* deal) - разиграва текущата ръка. Определя състояние на играчите според разиграването им
+bool IsPlayerInDeal(player_condition_type condition) - определя дали конкретен играч е активен за текущата ръка
+FileCondition GameSaveToFile(Player* players) - записва активните играчи във файл
+GameCondition GameLoop(Player* players) - разиграване на игра. Определя дали играта продължава или се прави запис на състоянието на текущата игра - потребителски вход
+int ActivePlayersCount(Player* players) - връща броят на активните играчи в играта
+bool IsPlayerInGame(player_condition_type condition) - проверява дали конкретен играч е активен за текущата игра
+void DeterminingWinner(Player* players, Deal* deal) - определя дали раздаването има победител или има равенство 

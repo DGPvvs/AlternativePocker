@@ -20,7 +20,7 @@ GameCondition GameLoop(Player* players)
 		{
 			ActualizePlayers(players);
 
-			if (ActivePlayersCount(players) == 1)
+			if (ActivePlayersInDealCount(players) == 1)
 			{
 				condition = GameCondition::Win;
 			}
@@ -73,7 +73,6 @@ FileCondition GameReadFromFile(Player* players)
 				players[id]._chips = chips;
 				players[id]._id = id;
 				players[id]._playerActive = PlayerCondition::Active;
-				players[id]._isHasSevenClubs = SEVEN_CLUBS_NOT_PRESENT;
 			}
 		}
 	}
@@ -126,12 +125,23 @@ void GameRun()
 	players = nullptr;
 }
 
-int ActivePlayersCount(Player* players)
+int ActivePlayersInDealCount(Player* players)
 {
 	int activeCount = 0;
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		activeCount += IsPlayerInDeal(players[i]._playerActive) ? 1 : 0;
+	}
+
+	return activeCount;
+}
+
+int ActivePlayersCount(Player* players)
+{
+	int activeCount = 0;
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		activeCount += IsPlayerInGame(players[i]._playerActive) ? 1 : 0;
 	}
 
 	return activeCount;
@@ -198,4 +208,45 @@ int GameSetPlayersNum()
 	}
 
 	return playersNum;
+}
+
+FileCondition GameSaveToFile(Player* players)
+{
+	FileCondition result = FileCondition::OK;
+
+	std::ofstream f(FILE_NAME);
+
+	try
+	{
+		if (f.is_open())
+		{
+			int playerCount = ActivePlayersCount(players);
+			f << playerCount << std::endl;
+
+			for (int i = 0; i < MAX_PLAYERS; i++)
+			{
+				Player& player = players[i];
+				bool condition = IsPlayerInGame(player._playerActive);
+				if (condition)
+				{
+					f << player._name << std::endl;
+					f << player._chips << std::endl;
+					f << player._id << std::endl;
+
+				}
+
+			}
+		}
+	}
+	catch (const std::exception&)
+	{
+		result = FileCondition::Error;
+	}
+
+	return result;
+}
+
+bool IsPlayerInGame(player_condition_type condition)
+{
+	return (condition != PlayerCondition::Unactive);
 }

@@ -4,10 +4,10 @@
 
 struct Card
 {
-private:
     card_type _card;
     bool _isSevenClubs;
-    std::string _catdStrong;
+    std::string _cardString;
 };
 
 void SetUpCardDesk(Card*);
+std::string CardToString(card_type);
