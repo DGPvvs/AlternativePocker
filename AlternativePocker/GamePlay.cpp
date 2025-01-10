@@ -37,7 +37,7 @@ GameCondition GameLoop(Player* players)
 		{
 			ActualizePlayers(players);
 
-			if (ActivePlayersInDealCount(players) == 1)
+			if (ActivePlayersCount(players) == 1)
 			{
 				condition = GameCondition::Win;
 			}
