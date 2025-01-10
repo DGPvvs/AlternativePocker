@@ -7,6 +7,23 @@
 #include "Player.h"
 #include "Deal.h"
 
+void ActualizePlayers(Player* players)
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+
+		if (player._playerActive != PlayerCondition::Unactive && player._chips < CHIP_VALUE)
+		{
+			player._playerActive = PlayerCondition::Unactive;
+		}
+		else
+		{
+			player._playerActive = PlayerCondition::Active;
+		}
+	}
+}
+
 GameCondition GameLoop(Player* players)
 {
 	Deal* deal = new Deal();
@@ -46,12 +63,11 @@ GameCondition GameLoop(Player* players)
 
 FileCondition GameReadFromFile(Player* players)
 {
-	FileCondition result = FileCondition::OK;
-	GameClear(players);
+	FileCondition result = FileCondition::Error;	
 
 	std::ifstream f(FILE_NAME);
 
-	try
+	if (f.is_open())
 	{
 		std::string s;
 		while (getline(f, s))
@@ -75,10 +91,7 @@ FileCondition GameReadFromFile(Player* players)
 				players[id]._playerActive = PlayerCondition::Active;
 			}
 		}
-	}
-	catch (const std::exception&)
-	{
-		result = FileCondition::Error;
+		result = FileCondition::OK;
 	}
 
 	f.close();
@@ -92,6 +105,7 @@ void GameChoisNewGame(Player* players)
 	std::cout << "Game Continue" << std::endl << "New Game" << std::endl << "Choice c/n: ";
 	std::getline(std::cin, s);
 
+	GameClear(players);
 	FileCondition f = GameReadFromFile(players);
 
 	bool choisFlag = (s == "c" || s == "C") && (f == FileCondition::OK);

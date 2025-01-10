@@ -1,0 +1,20 @@
+Local for GamePlayer.cpp
+void GameClear(Player* players)
+void InitEmptyPlayer(Player& player)
+FileCondition GameReadFromFile(Player* players)
+GameSetPlayersNum()
+void GameInitPlayers(Player* players, int playersNum)
+GameCondition GameLoop(Player* players)
+void ActualizePlayers(Player* players)
+
+Local for Deal.cpp
+int ActivePlayersCount(Player* players)
+bool IsPlayerInGame(player_condition_type condition)
+bool DealStart(Player* players, Deal* deal)
+bool IsPlayerInDeal(player_condition_type condition)
+void SetCards(Player& player,  Card* cardsDesk, int& deckSize)
+void DealPlay(Player* players, Deal* deal)
+void DeterminingWinner(Player* players, Deal* deal)
+
+Local for Card.cpp
+std::string CardToString(card_type card)

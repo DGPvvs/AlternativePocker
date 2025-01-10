@@ -5,7 +5,7 @@
 
 GameCondition DealLoop(Player* players, Deal* deal)
 {
-	int activeCount = ActivePlayersCount(players);
+	int activeCount = ActivePlayersInDealCount(players);
 
 	if (activeCount == 1)
 	{
@@ -162,7 +162,7 @@ void DealPlay(Player* players, Deal* deal)
 
 		currentPlayerIndex = (++currentPlayerIndex) % MAX_PLAYERS;
 
-		activePlayers = ActivePlayersCount(players);
+		activePlayers = ActivePlayersInDealCount(players);
 	}
 }
 
