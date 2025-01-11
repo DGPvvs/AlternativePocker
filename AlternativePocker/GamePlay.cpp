@@ -13,13 +13,17 @@ void ActualizePlayers(Player* players)
 	{
 		Player& player = players[i];
 
-		if (player._playerActive != PlayerCondition::Unactive && player._chips < CHIP_VALUE)
+		if (player._playerActive != PlayerCondition::Unactive)
 		{
-			player._playerActive = PlayerCondition::Unactive;
-		}
-		else
-		{
-			player._playerActive = PlayerCondition::Active;
+			if (player._chips < CHIP_VALUE)
+			{
+				player._playerActive = PlayerCondition::Unactive;
+			}
+			else
+			{
+				player._playerActive = PlayerCondition::Active;
+				player._lastRaice = 0;
+			}
 		}
 	}
 }

@@ -205,7 +205,7 @@ void InitEmptyPlayer(Player& player)
 
 bool IsPlayerInDeal(player_condition_type condition)
 {
-	return (condition != PlayerCondition::Unactive) && ((condition & PlayerCondition::Fold) != PlayerCondition::Fold);
+	return (condition != PlayerCondition::Unactive) && ((condition & PlayerCondition::Active) == PlayerCondition::Active);
 }
 
 int CalcMaxRaise(Player* players)

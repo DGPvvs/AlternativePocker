@@ -3,6 +3,20 @@
 #include "GamePlay.h"
 #include <iostream>
 
+void DysplayPlayersInDeal(Player* players)
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+		player_condition_type condition = player._playerActive;
+
+		if (IsPlayerInGame(condition))
+		{
+			std::cout << player._cardsAndRangeToString << std::endl << std::endl;
+		}
+	}
+}
+
 GameCondition DealLoop(Player* players, Deal* deal)
 {
 	int activeCount = ActivePlayersInDealCount(players);
@@ -264,6 +278,7 @@ void DeterminingWinner(Player* players, Deal* deal)
 		deal->_lastGameRaise = 0;
 
 		std::cout << winner._name << " is winner." << std::endl << std::endl;
+		DysplayPlayersInDeal(players);
 	}
 }
 
