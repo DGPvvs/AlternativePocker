@@ -29,6 +29,20 @@ void DysplayPlayersInDeal(Player* players)
 	}
 }
 
+void DysplayPlayersInDeal(Player* players)
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+		player_condition_type condition = player._playerActive;
+
+		if (IsPlayerInGame(condition))
+		{
+			std::cout << player._cardsAndRangeToString << std::endl << std::endl;
+		}
+	}
+}
+
 GameCondition DealLoop(Player* players, Deal* deal)
 {
 	int activeCount = ActivePlayersInDealCount(players);
