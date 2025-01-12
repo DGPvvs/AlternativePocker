@@ -112,17 +112,17 @@ void DealPlay(Player* players, Deal* deal)
 
 				if (isFirst)
 				{
-					std::cout << player._name << " raise or fold? r/f: ";
+					std::cout << "Player" << currentPlayerIndex + 1 << " raise or fold? r/f: ";
 					ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold;
 				}
 				else if (deal->_currentMaxRaise <= deal->_lastGameRaise)
 				{
-					std::cout << player._name << " call or fold? c/f: ";
+					std::cout << "Player" << currentPlayerIndex + 1 << " call or fold? c/f: ";
 					ChoiceMade = PlayerCondition::Fold | PlayerCondition::Call;
 				}
 				else
 				{
-					std::cout << player._name << " raise, call or fold? r/c/f: ";
+					std::cout << "Player" << currentPlayerIndex + 1 << " raise, call or fold? r/c/f: ";
 					ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold | PlayerCondition::Call;
 				}
 
