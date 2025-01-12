@@ -92,7 +92,7 @@ int TwoCardsOfPip(Card* cards)
 }
 
 int TwoCardsOfSuit(Card* cards)
-{	
+{
 	int points = 0;
 
 	if (ThreeOfTheSameSuit(cards) == 0)
@@ -157,7 +157,7 @@ int ThreeSevens(Card* cards)
 {
 	bool result = true;
 
-	for(int i = 0; i < CARDS_COUNT; i++)
+	for (int i = 0; i < CARDS_COUNT; i++)
 	{
 		result = result && ((cards[i]._card & Pip::PipMask) == Pip::N7);
 	}
@@ -205,7 +205,7 @@ void InitEmptyPlayer(Player& player)
 
 bool IsPlayerInDeal(player_condition_type condition)
 {
-	return (condition != PlayerCondition::Unactive) && ((condition & PlayerCondition::Fold) != PlayerCondition::Fold);
+	return (condition != PlayerCondition::Unactive) && ((condition & PlayerCondition::Active) == PlayerCondition::Active);
 }
 
 int CalcMaxRaise(Player* players)
@@ -219,13 +219,13 @@ int CalcMaxRaise(Player* players)
 		if (IsPlayerInDeal(condition) && playerChips < maxRaise)
 		{
 			maxRaise = playerChips;
-		}		
+		}
 	}
 
 	return maxRaise;
 }
 
-void SetCards(Player& player,  Card* cardsDesk, int& deckSize)
+void SetCards(Player& player, Card* cardsDesk, int& deckSize)
 {
 	srand(time(0));
 	Card* cards = new Card[CARDS_COUNT];
@@ -244,5 +244,4 @@ void SetCards(Player& player,  Card* cardsDesk, int& deckSize)
 	delete[] cards;
 	cards = nullptr;
 }
-
 

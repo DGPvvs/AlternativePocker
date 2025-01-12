@@ -13,13 +13,17 @@ void ActualizePlayers(Player* players)
 	{
 		Player& player = players[i];
 
-		if (player._playerActive != PlayerCondition::Unactive && player._chips < CHIP_VALUE)
+		if (player._playerActive != PlayerCondition::Unactive)
 		{
-			player._playerActive = PlayerCondition::Unactive;
-		}
-		else
-		{
-			player._playerActive = PlayerCondition::Active;
+			if (player._chips < CHIP_VALUE)
+			{
+				player._playerActive = PlayerCondition::Unactive;
+			}
+			else
+			{
+				player._playerActive = PlayerCondition::Active;
+				player._lastRaice = 0;
+			}
 		}
 	}
 }
@@ -37,7 +41,7 @@ GameCondition GameLoop(Player* players)
 		{
 			ActualizePlayers(players);
 
-			if (ActivePlayersInDealCount(players) == 1)
+			if (ActivePlayersCount(players) == 1)
 			{
 				condition = GameCondition::Win;
 			}
@@ -63,7 +67,7 @@ GameCondition GameLoop(Player* players)
 
 FileCondition GameReadFromFile(Player* players)
 {
-	FileCondition result = FileCondition::Error;	
+	FileCondition result = FileCondition::Error;
 
 	std::ifstream f(FILE_NAME);
 
@@ -181,7 +185,7 @@ void GameClear(Player* players)
 {
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		InitEmptyPlayer(players[i]);		
+		InitEmptyPlayer(players[i]);
 	}
 }
 

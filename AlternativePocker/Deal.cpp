@@ -1,7 +1,33 @@
+#include <iostream>
+
 #include "Deal.h"
 #include "GlobalConstants.h"
 #include "GamePlay.h"
-#include <iostream>
+
+int CalcHalf(int pot)
+{
+	int half = pot / 2;
+	if ((half % 10) == 5)
+	{
+		half += 5;
+	}
+
+	return half;
+}
+
+void DysplayPlayersInDeal(Player* players)
+{
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player& player = players[i];
+		player_condition_type condition = player._playerActive;
+
+		if (IsPlayerInGame(condition))
+		{
+			std::cout << player._cardsAndRangeToString << std::endl << std::endl;
+		}
+	}
+}
 
 GameCondition DealLoop(Player* players, Deal* deal)
 {
@@ -80,8 +106,8 @@ void DealPlay(Player* players, Deal* deal)
 			while (!isCorrect)
 			{
 				player_condition_type ChoiceMade = PlayerCondition::Unactive;
-				std::cout << "You have given: " << player._lastRaice << std::endl;
-				std::cout << "Last raise is: " << deal->_lastGameRaise << std::endl << std::endl;
+				std::cout << "You have given: " << player._lastRaice / 10 << " chips" << std::endl;
+				std::cout << "Last raise is: " << deal->_lastGameRaise / 10 << " chips" << std::endl << std::endl;
 				std::cout << player._cardsAndRangeToString << std::endl;
 
 				if (isFirst)
@@ -128,13 +154,13 @@ void DealPlay(Player* players, Deal* deal)
 
 					while (!isCorrectPay)
 					{
-						std::cout << player._name << " pay: (" << deal->_lastGameRaise + CHIP_VALUE << " - " << deal->_currentMaxRaise << "): ";
+						std::cout << player._name << " pay: (" << (deal->_lastGameRaise + CHIP_VALUE) / 10 << " - " << deal->_currentMaxRaise / 10 << " chips): ";
 						std::getline(std::cin, s);
 						std::cout << std::endl;
 
 						try
 						{
-							paymentAmount = stoi(s);
+							paymentAmount = stoi(s) * 10;
 							if ((paymentAmount >= deal->_lastGameRaise + CHIP_VALUE) && paymentAmount <= deal->_currentMaxRaise)
 							{
 								isCorrectPay = true;
@@ -203,7 +229,7 @@ void DeterminingWinner(Player* players, Deal* deal)
 
 	if (winnersCount > 1)
 	{
-		int halfPot = std::ceil(1.0 * deal->_pot / 2);
+		int halfPot = CalcHalf(deal->_pot);
 
 		for (int i = 0; i < MAX_PLAYERS; i++)
 		{
@@ -264,6 +290,7 @@ void DeterminingWinner(Player* players, Deal* deal)
 		deal->_lastGameRaise = 0;
 
 		std::cout << winner._name << " is winner." << std::endl << std::endl;
+		DysplayPlayersInDeal(players);
 	}
 }
 
