@@ -199,17 +199,6 @@ int CalcPoints(Card* cards)
 	return points;
 }
 
-std::string GaneratePlayerString(Card* cards)
-{
-	std::string result = "";
-	for (int i = 0; i < CARDS_COUNT; i++)
-	{
-		result.append(cards[i]._cardString).append(" ");
-	}
-
-	return result;
-}
-
 void InitEmptyPlayer(Player& player)
 {
 	player._playerActive = PlayerCondition::Unactive;
