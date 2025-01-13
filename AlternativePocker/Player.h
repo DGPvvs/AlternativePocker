@@ -6,14 +6,12 @@
 
 struct Player
 {
-	std::string _name;
 	player_condition_type _playerActive;
-	std::string _cardsAndRangeToString;
+	char _cardsToString[20];
 
 	int _chips;
 	int _lastRaice;
 	int _currentPoints;
-	int _id;
 };
 
 //int TwoCardsOfPip(Card*);

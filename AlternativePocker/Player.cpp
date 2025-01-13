@@ -21,6 +21,24 @@ bool HasSevenClubs(Card* cards)
 	return isHasSevenClubs;
 }
 
+void GeneratePlayerString(Player& player, Card* cards)
+{
+	int idx = 0;
+
+	for (int i = 0; i < CARDS_COUNT; i++)
+	{
+		int cardIdx = 0;
+		while (cards[i]._cardString[cardIdx] != '\0')
+		{
+			player._cardsToString[idx++] = cards[i]._cardString[cardIdx++];
+		}
+
+		player._cardsToString[idx++] = ' ';
+	}
+
+	player._cardsToString[idx] = '\0';
+}
+
 int ThreeOfTheSameSuit(Card* cards)
 {
 	bool result = true;
@@ -194,13 +212,10 @@ std::string GaneratePlayerString(Card* cards)
 
 void InitEmptyPlayer(Player& player)
 {
-	player._name = "";
-	player._cardsAndRangeToString = "";
 	player._playerActive = PlayerCondition::Unactive;
 	player._chips = 0;
 	player._lastRaice = 0;
 	player._currentPoints = 0;
-	player._id = 0;
 }
 
 bool IsPlayerInDeal(player_condition_type condition)
@@ -239,7 +254,7 @@ void SetCards(Player& player, Card* cardsDesk, int& deckSize)
 	}
 
 	player._currentPoints = CalcPoints(cards);
-	player._cardsAndRangeToString = GaneratePlayerString(cards).append(std::to_string(player._currentPoints));
+	GeneratePlayerString(player, cards);
 
 	delete[] cards;
 	cards = nullptr;

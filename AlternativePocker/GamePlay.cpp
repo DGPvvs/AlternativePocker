@@ -73,29 +73,19 @@ FileCondition GameReadFromFile(Player* players)
 
 	if (f.is_open())
 	{
-		std::string s;
-		while (getline(f, s))
+		int playerChips;
+
+		for (int i = 0; i < MAX_PLAYERS; i++)
 		{
-			int playersNum = stoi(s);
+			f >> playerChips;
 
-			for (int i = 0; i < playersNum; i++)
-			{
-				getline(f, s);
-				std::string name = s;
-
-				getline(f, s);
-				int chips = stoi(s);
-
-				getline(f, s);
-				int id = stoi(s);
-
-				players[id]._name = name;
-				players[id]._chips = chips;
-				players[id]._id = id;
-				players[id]._playerActive = PlayerCondition::Active;
-			}
+			players[i]._chips = playerChips;
+			players[i]._playerActive = PlayerCondition::Active;
 		}
+
 		result = FileCondition::OK;
+
+		ActualizePlayers(players);
 	}
 
 	f.close();
@@ -171,12 +161,7 @@ void GameInitPlayers(Player* players, int playersNum)
 
 	for (int i = 0; i < playersNum; i++)
 	{
-		int plaiersId = i + 1;
-		std::string playerName = std::string().append("Player").append(std::to_string(plaiersId));
-
-		players[i]._name = playerName;
 		players[i]._chips = CHIP_VALUE * START_POINTS;
-		players[i]._id = plaiersId;
 		players[i]._playerActive = PlayerCondition::Active;
 	}
 }
@@ -238,21 +223,11 @@ FileCondition GameSaveToFile(Player* players)
 	{
 		if (f.is_open())
 		{
-			int playerCount = ActivePlayersCount(players);
-			f << playerCount << std::endl;
-
 			for (int i = 0; i < MAX_PLAYERS; i++)
 			{
 				Player& player = players[i];
-				bool condition = IsPlayerInGame(player._playerActive);
-				if (condition)
-				{
-					f << player._name << std::endl;
-					f << player._chips << std::endl;
-					f << player._id << std::endl;
 
-				}
-
+				f << player._chips << " ";
 			}
 		}
 	}
@@ -260,6 +235,8 @@ FileCondition GameSaveToFile(Player* players)
 	{
 		result = FileCondition::Error;
 	}
+
+	f.close();
 
 	return result;
 }

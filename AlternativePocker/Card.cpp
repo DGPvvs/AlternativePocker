@@ -15,73 +15,82 @@ void SetUpCardDesk(Card* cardsDeck)
 			isSevenClubs = isSevenClubs && (card._card & Pip::PipMask) == Pip::N7;
 
 			card._isSevenClubs = isSevenClubs;
-			card._cardString = CardToString(card._card);
+			CardToString(card);
 			cardsDeck[idx++] = card;
 		}
 	}
 }
 
-std::string CardToString(card_type card)
+void CardToString(Card& card)
 {
-	std::string result = "";
-
-	switch (card & Pip::PipMask)
+	for (int i = 0; i < 4; i++)
 	{
-	case  Pip::A:
-		result.append("A");
-		break;
-
-	case Pip::K:
-		result.append("K");
-		break;
-
-	case Pip::Q:
-		result.append("Q");
-		break;
-
-	case Pip::J:
-		result.append("J");
-		break;
-
-	case Pip::N10:
-		result.append("10");
-		break;
-
-	case Pip::N9:
-		result.append("9");
-		break;
-
-	case Pip::N8:
-		result.append("8");
-		break;
-
-	case Pip::N7:
-		result.append("7");
-		break;
-	default:
-		break;
+		card._cardString[i] = '\0';
 	}
 
-	switch (card & Suit::SuitMask)
+	char first = '\0';
+	char second = '\0';
+
+	switch (card._card & Suit::SuitMask)
 	{
 	case Suit::Hearts:
-		result.append("H");
+		second = 'H';
 		break;
 
 	case Suit::Diamonds:
-		result.append("D");
+		second = 'D';
 		break;
 
 	case Suit::Clubs:
-		result.append("C");
+		second = 'C';
 		break;
 
 	case Suit::Spades:
-		result.append("S");
+		second = 'S';
 		break;
 	default:
 		break;
 	}
 
-	return result;
+	switch (card._card & Pip::PipMask)
+	{
+	case  Pip::A:
+		first = 'A';
+		break;
+
+	case Pip::K:
+		first = 'K';
+		break;
+
+	case Pip::Q:
+		first = 'Q';
+		break;
+
+	case Pip::J:
+		first = 'J';
+		break;
+
+	case Pip::N9:
+		first = '9';
+		break;
+
+	case Pip::N8:
+		first = '8';
+		break;
+
+	case Pip::N7:
+		first = '7';
+		break;
+	default:
+		card._cardString[0] = '1';
+		card._cardString[1] = '0';
+		card._cardString[2] = second;
+		break;
+	}
+
+	if (first != '\0')
+	{
+		card._cardString[0] = first;
+		card._cardString[1] = second;
+	}
 }
