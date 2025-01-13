@@ -131,16 +131,18 @@ void DealPlay(Player* players, Deal* deal)
 					ChoiceMade = PlayerCondition::Raise | PlayerCondition::Fold | PlayerCondition::Call;
 				}
 
-				std::string s;
-				std::getline(std::cin, s);
+				char ch;
+				std::cin >> ch;
+				while (std::cin.get() != '\n');
+
 				std::cout << std::endl;
 
-				if ((s == "f" || s == "F") && (ChoiceMade & PlayerCondition::Fold) == PlayerCondition::Fold)
+				if ((ch == 'f' || ch == 'F') && (ChoiceMade & PlayerCondition::Fold) == PlayerCondition::Fold)
 				{
 					player._playerActive = PlayerCondition::Fold;
 					isCorrect = true;
 				}
-				else if ((s == "c" || s == "C") && !isFirst && (ChoiceMade & PlayerCondition::Call) == PlayerCondition::Call)
+				else if ((ch == 'c' || ch == 'C') && !isFirst && (ChoiceMade & PlayerCondition::Call) == PlayerCondition::Call)
 				{
 					currentCall++;
 					int lastPlayerRaise = player._lastRaice;
@@ -152,7 +154,7 @@ void DealPlay(Player* players, Deal* deal)
 					deal->_pot += pays;
 					isCorrect = true;
 				}
-				else if ((s == "r" || s == "R") && (ChoiceMade & PlayerCondition::Raise) == PlayerCondition::Raise)
+				else if ((ch == 'r' || ch == 'R') && (ChoiceMade & PlayerCondition::Raise) == PlayerCondition::Raise)
 				{
 					bool isCorrectPay = false;
 					int paymentAmount;
@@ -160,12 +162,15 @@ void DealPlay(Player* players, Deal* deal)
 					while (!isCorrectPay)
 					{
 						std::cout << "Player" << currentPlayerIndex + 1 << " pay: (" << (deal->_lastGameRaise + CHIP_VALUE) / 10 << " - " << deal->_currentMaxRaise / 10 << " chips): ";
-						std::getline(std::cin, s);
+												
+						std::cin >> paymentAmount;
 						std::cout << std::endl;
+
+						paymentAmount *= 10;
 
 						try
 						{
-							paymentAmount = stoi(s) * 10;
+							
 							if ((paymentAmount >= deal->_lastGameRaise + CHIP_VALUE) && paymentAmount <= deal->_currentMaxRaise)
 							{
 								isCorrectPay = true;
@@ -261,11 +266,14 @@ void DeterminingWinner(Player* players, Deal* deal)
 					while (!isCorrect)
 					{
 						std::cout << "Player" << i + 1 << " will you pay half pot? y/n:";
-						std::string s;
-						std::getline(std::cin, s);
+
+						char ch;
+						std::cin >> ch;
+						while (std::cin.get() != '\n');
+
 						std::cout << std::endl << std::endl;
 
-						if (s == "y" || s == "Y")
+						if (ch == 'y' || ch == 'Y')
 						{
 							player._chips -= halfPot;
 							deal->_pot += halfPot;
@@ -273,7 +281,7 @@ void DeterminingWinner(Player* players, Deal* deal)
 							player._lastRaice = 0;
 							isCorrect = true;
 						}
-						else if (s == "n" || s == "N")
+						else if (ch == 'n' || ch == 'N')
 						{
 							player._playerActive = PlayerCondition::Fold;
 							player._lastRaice = 0;

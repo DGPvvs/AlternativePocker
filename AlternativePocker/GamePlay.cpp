@@ -46,12 +46,13 @@ GameCondition GameLoop(Player* players)
 				condition = GameCondition::Win;
 			}
 			else
-			{
-				std::string s;
+			{				
 				std::cout << "Play again? y/n: ";
-				std::getline(std::cin, s);
+				char ch;
+				std::cin >> ch;
+				while (std::cin.get() != '\n');
 
-				if (s == "n" || s == "N")
+				if (ch == 'n' || ch == 'N')
 				{
 					condition = GameCondition::End;
 				}
@@ -95,14 +96,16 @@ FileCondition GameReadFromFile(Player* players)
 
 void GameChoisNewGame(Player* players)
 {
-	std::string s;
 	std::cout << "Game Continue" << std::endl << "New Game" << std::endl << "Choice c/n: ";
-	std::getline(std::cin, s);
+
+	char ch;
+	std::cin >> ch;
+	while (std::cin.get() != '\n');
 
 	GameClear(players);
 	FileCondition f = GameReadFromFile(players);
 
-	bool choisFlag = (s == "c" || s == "C") && (f == FileCondition::OK);
+	bool choisFlag = (ch == 'c' || ch == 'C') && (f == FileCondition::OK);
 
 	if (!choisFlag)
 	{
@@ -182,19 +185,16 @@ int GameSetPlayersNum()
 
 	while (!isChoisCorect)
 	{
-		std::string s;
-
 		std::cout << "How many players are going to play("
 			<< MIN_PLAYERS
 			<< " - "
 			<< MAX_PLAYERS
 			<< ")? ";
 
-		std::getline(std::cin, s);
+		std::cin >> playersNum;
 
 		try
 		{
-			playersNum = stoi(s);
 			bool correctNum = (playersNum < MIN_PLAYERS || playersNum > MAX_PLAYERS);
 
 			if (correctNum)

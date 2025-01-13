@@ -1,4 +1,6 @@
 #include <ctime>
+#include <climits>
+#include <cstdlib>
 
 #include "Player.h"
 #include "GlobalConstants.h"
