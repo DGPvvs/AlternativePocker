@@ -62,7 +62,6 @@ bool DealStart(Player* players, Deal* deal)
 
 	SetUpCardDesk(cardDeck);
 	int currentDeskCount = DECK_COUNT;
-	int* currentDeskCountPtr = &currentDeskCount;
 
 	bool result = DEAL_PLAY;
 
@@ -162,23 +161,27 @@ void DealPlay(Player* players, Deal* deal)
 					while (!isCorrectPay)
 					{
 						std::cout << "Player" << currentPlayerIndex + 1 << " pay: (" << (deal->_lastGameRaise + CHIP_VALUE) / 10 << " - " << deal->_currentMaxRaise / 10 << " chips): ";
-												
-						std::cin >> paymentAmount;
-						std::cout << std::endl;
-
-						paymentAmount *= 10;
-
-						try
+						
+						if (!(std::cin >> paymentAmount))
 						{
-							
+							std::cin.clear();
+							std::cin.ignore(INT_MAX, '\n');
+							std::cout << std::endl << WARNING << std::endl;
+							std::cout << std::endl;
+						}
+						else
+						{
+							paymentAmount *= 10;
+
 							if ((paymentAmount >= deal->_lastGameRaise + CHIP_VALUE) && paymentAmount <= deal->_currentMaxRaise)
 							{
 								isCorrectPay = true;
 							}
-						}
-						catch (const std::exception&)
-						{
-							isCorrectPay = false;
+							else
+							{
+								std::cout << std::endl << WARNING << std::endl;
+								isCorrectPay = false;
+							}
 						}
 					}
 

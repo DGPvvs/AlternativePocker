@@ -185,28 +185,33 @@ int GameSetPlayersNum()
 
 	while (!isChoisCorect)
 	{
+		std::cin.clear();
+
 		std::cout << "How many players are going to play("
 			<< MIN_PLAYERS
 			<< " - "
 			<< MAX_PLAYERS
 			<< ")? ";
 
-		std::cin >> playersNum;
-
-		try
+		if (!(std::cin >> playersNum))
 		{
-			bool correctNum = (playersNum < MIN_PLAYERS || playersNum > MAX_PLAYERS);
-
+			std::cin.clear();
+			std::cin.ignore(INT_MAX, '\n');
+			std::cout << std::endl << WARNING << std::endl;
+			isChoisCorect = false;
+		}
+		else
+		{
+			bool correctNum = (playersNum >= MIN_PLAYERS && playersNum <= MAX_PLAYERS);
 			if (correctNum)
 			{
-				throw std::runtime_error("");
+				isChoisCorect = true;
 			}
-
-			isChoisCorect = true;
-		}
-		catch (const std::exception&)
-		{
-			std::cout << WARNING << std::endl;
+			/*else
+			{
+				std::cout << std::endl << WARNING << std::endl;
+				isChoisCorect = false;
+			}*/
 		}
 	}
 
