@@ -1,6 +1,8 @@
 #include "Card.h"
 #include "GlobalConstants.h"
 
+void CardToString(Card&);
+
 void SetUpCardDesk(Card* cardsDeck)
 {
 	int idx = 0;

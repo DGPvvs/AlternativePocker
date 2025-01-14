@@ -9,4 +9,3 @@ struct Card
 };
 
 void SetUpCardDesk(Card*);
-void CardToString(Card&);

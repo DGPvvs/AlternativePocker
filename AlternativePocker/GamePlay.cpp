@@ -7,6 +7,16 @@
 #include "Player.h"
 #include "Deal.h"
 
+int ActivePlayersCount(Player* players);
+void ActualizePlayers(Player*);
+void GameInitPlayers(Player*, int);
+void GameClear(Player*);
+int GameSetPlayersNum();
+FileCondition GameSaveToFile(Player* players);
+GameCondition GameLoop(Player*);
+FileCondition GameReadFromFile(Player*);
+void GameChoisNewGame(Player*);
+
 void ActualizePlayers(Player* players)
 {
 	for (int i = 0; i < MAX_PLAYERS; i++)

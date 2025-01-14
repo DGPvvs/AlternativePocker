@@ -12,7 +12,4 @@ struct Deal
 };
 
 GameCondition DealLoop(Player*, Deal*);
-bool DealStart(Player*, Deal*);
-void DealPlay(Player*, Deal*);
-void DeterminingWinner(Player*, Deal*);
 void ClearDeal(Deal*);

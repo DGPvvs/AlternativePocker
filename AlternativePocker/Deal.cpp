@@ -4,6 +4,10 @@
 #include "GlobalConstants.h"
 #include "GamePlay.h"
 
+bool DealStart(Player*, Deal*);
+void DealPlay(Player*, Deal*);
+void DeterminingWinner(Player*, Deal*);
+
 int CalcHalf(int pot)
 {
 	int half = pot / 2;
