@@ -19,9 +19,9 @@ int CalcHalf(int pot)
 	return half;
 }
 
-void DisplayPlayer(Player& player)
+void DisplayPlayer(Player& player, int idx)
 {
-	std::cout << player._cardsToString << player._currentPoints << std::endl << std::endl;
+	std::cout << "Player" << idx << " " << player._cardsToString << player._currentPoints << std::endl << std::endl;
 }
 
 void DisplayPlayersInDeal(Player* players)
@@ -33,7 +33,7 @@ void DisplayPlayersInDeal(Player* players)
 
 		if (IsPlayerInGame(condition))
 		{
-			DisplayPlayer(player);
+			DisplayPlayer(player, i + 1);
 		}
 	}
 }
@@ -114,9 +114,9 @@ void DealPlay(Player* players, Deal* deal)
 			while (!isCorrect)
 			{
 				player_condition_type ChoiceMade = PlayerCondition::Unactive;
-				std::cout << "You have given: " << player._lastRaice / 10 << " chips" << std::endl;
-				std::cout << "Last raise is: " << deal->_lastGameRaise / 10 << " chips" << std::endl << std::endl;
-				DisplayPlayer(player);
+				std::cout << "You have given: " << player._lastRaice / CHIP_VALUE << " chips" << std::endl;
+				std::cout << "Last raise is: " << deal->_lastGameRaise / CHIP_VALUE << " chips" << std::endl << std::endl;
+				DisplayPlayer(player, currentPlayerIndex + 1);
 
 				if (isFirst)
 				{
@@ -164,7 +164,7 @@ void DealPlay(Player* players, Deal* deal)
 
 					while (!isCorrectPay)
 					{
-						std::cout << "Player" << currentPlayerIndex + 1 << " pay: (" << (deal->_lastGameRaise + CHIP_VALUE) / 10 << " - " << deal->_currentMaxRaise / 10 << " chips): ";
+						std::cout << "Player" << currentPlayerIndex + 1 << " pay: (" << (deal->_lastGameRaise + CHIP_VALUE) / CHIP_VALUE << " - " << deal->_currentMaxRaise / CHIP_VALUE << " chips): ";
 						
 						if (!(std::cin >> paymentAmount))
 						{
@@ -175,7 +175,7 @@ void DealPlay(Player* players, Deal* deal)
 						}
 						else
 						{
-							paymentAmount *= 10;
+							paymentAmount *= CHIP_VALUE;
 
 							if ((paymentAmount >= deal->_lastGameRaise + CHIP_VALUE) && paymentAmount <= deal->_currentMaxRaise)
 							{
@@ -209,7 +209,7 @@ void DealPlay(Player* players, Deal* deal)
 	}
 }
 
-void DeterminingWinner(Player* players, Deal* deal)
+int CalcMaxPoint(Player* players)
 {
 	int maxPoint = 0;
 	for (int i = 0; i < MAX_PLAYERS; i++)
@@ -222,6 +222,13 @@ void DeterminingWinner(Player* players, Deal* deal)
 			maxPoint = player._currentPoints;
 		}
 	}
+
+	return maxPoint;
+}
+
+void DeterminingWinner(Player* players, Deal* deal)
+{
+	int maxPoint = CalcMaxPoint(players);	
 
 	int winnersCount = 0;
 	int lastWinnerIdx = -1;
